@@ -10,15 +10,15 @@ It reads a directory and calculates the word count of each file in the directory
 The main process involves the following :
 
     1. Application starts up by seting up the Actor sytem with the actors and sending a scan message to FileScannerActor.
-    2. FileScannerActor gets all the files present in the defined directory (i.e. src/main/resources/log) and sends to FileParserActor.
-    3. The FileParserActor parses each file and sends stream of all LINES in the file along with a START_OF_FILE and END_OF_FILE events to AggregatorActor.
+    2. FileScannerActor gets all the files present in the defined directory (i.e. resources/log by default) and sends to FileParserActor.
+    3. The FileParserActor parses each file and sends LINES in the file along with START_OF_FILE and END_OF_FILE events to AggregatorActor.
     4. The AggregatorActor aggregates the wordcount of each file and prints to console when it receives END_OF_FILE event.
     
 ### Configuration:
    
 1. The application can be run in two ways:
 
-      a. Single Mode - Runs a single SCAN across log directory
+      a. Single Mode - Runs a single SCAN to process log directory
       
              // default   
              execution-mode = scheduler 
@@ -30,7 +30,7 @@ The main process involves the following :
 
 2. The directory to be scanned should be present in the resources classpath. The app supports recursive scans, hence would calculate word count of each file in a directory. 
             
-            // default directory, present in src/main/resources
+            // default directory, present in /resources
             log-directory = log  
             
 Note : Configurations regarding jmx, actor mailbox , dispatchers ,log levels and debugging options can be tuned as and when needed in application.conf             
@@ -42,21 +42,22 @@ Note : Configurations regarding jmx, actor mailbox , dispatchers ,log levels and
 
 2. Logback : Logging Framework
 
-Note: TypeSafe Config (Akka Framework dependency) is overriden (application.conf overrides reference.conf of akka) and referred (i.e. loaded by Akka).
+Note: TypeSafe Config (used as dependency in Akka Framework ) is overriden (application.conf overrides reference.conf of akka) and referred (i.e. loaded by Akka).
         
 
 ### Consistency 
 
-Consistency and sequencing of message events ( START_OF_FILE , line, END_OF_FILE ) can be guaranteed by use of Atomic Counter and having actor mailbox with underlying FIFO implementation. 
+Consistency and sequencing of message events ( START_OF_FILE , line, END_OF_FILE ) can be guaranteed by use of Atomic Counter and having actor mailbox with underlying FIFO queue implementation. 
 
 ### Scalability
 
-The above model showcases medium scalability.
+The above model showcases medium scalability through following :
 
-A separate dispatcher (i.e. custom-blocking-io-dispatcher in application.conf) for FileParserActor (that parses lines of individual files) is used to not starve the AggregatorActor.
-AggregatorActor has a blocking mailbox (i.e. custom-bounded-mailbox in application.conf) to prevent itself from being overwhelmed by messages from FileParserActor. However this can be debatable based on the available memory and system constraints.
+    1. A separate dispatcher (i.e. custom-blocking-io-dispatcher) for FileParserActor (that parses lines of individual files) is configured to carry out I/O Reads in separate Execution Context such that it doesn't starve the AggregatorActor.
+    2. AggregatorActor has a blocking mailbox (i.e. custom-bounded-mailbox) to prevent itself from being overwhelmed by messages from FileParserActor. 
+       However this can be debatable based on the available memory and system constraints.
 
-The best can be achieved by this model by tuning these configs according to the memory and system constraints.    
+The best capability of this model can be showcased by tuning these configs according to the memory and system constraints.    
 
 
 ### Possibilities of improvement
@@ -103,6 +104,6 @@ Scanning default :  "src/main/resources/log" containing 10 random sample logs
         
         
 ### Monitoring  
-      
-      ![Alt Text](https://github.com/rahul619anand/akka-wordcounter/blob/master/Cpu_Sample.png)
-      ![Alt Text](https://github.com/rahul619anand/akka-wordcounter/blob/master/Thread_Monitor.png)
+     
+   ![CPU Sample Snapshot](https://github.com/rahul619anand/akka-wordcounter/blob/master/Cpu_Sample.png)
+   ![Thread State Snapshot](https://github.com/rahul619anand/akka-wordcounter/blob/master/Thread_Monitor.png)
