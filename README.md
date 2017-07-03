@@ -104,4 +104,5 @@ Scanning default :  "src/main/resources/log" containing 10 random sample logs
         
 ### Monitoring  
       
-      ![alt tag](http://url/to/img.png)
+      ![cpu samples snapshot -](https://github.com/rahul619anand/akka-wordcounter/blob/master/Cpu_Sample.png)
+      ![thread state snapshot -](https://github.com/rahul619anand/akka-wordcounter/blob/master/Thread_Monitor.png)
