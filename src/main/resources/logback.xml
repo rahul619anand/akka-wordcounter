@@ -1,0 +1,63 @@
+<configuration>
+
+     <!--This tag allows us to dynamically change log level by any jmx based management tool (jvisualvm)
+         At any instant debug logs can be turned on in production -->
+    <jmxConfigurator />
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date{ISO8601} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--Akka logger is already async . This is to provide async logging using logback framework -->
+    <appender name="ASYNC_STDOUT" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="STDOUT" />
+    </appender>
+
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>application.log</file>
+
+        <append>true</append>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>application.%i.log.zip</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>10</maxIndex>
+        </rollingPolicy>
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>1MB</maxFileSize>
+        </triggeringPolicy>
+
+        <encoder>
+            <!--
+            sourceActorSystem - actor system name ( ex : custom-actor-system  )
+            akkaSource - actor address ( ex: akka://custom-actor-system/user/FileScannerActor )
+            sourceThread - thread on which operation is carried out (custom-actor-system-akka.actor.default-dispatcher-6 )
+            -->
+            <pattern>%date{ISO8601} %-5level %logger{36} %X{sourceActorSystem} %X{akkaSource} %X{sourceThread} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="FILE" />
+    </appender>
+
+
+    <root level="INFO">
+        <appender-ref ref="ASYNC_FILE" />
+        <appender-ref ref="ASYNC_STDOUT" />
+    </root>
+
+
+    <!-- Improve :
+
+    Installing a JVM shutdown hook is a convenient way for
+    shutting down logback and releasing associated resources
+
+    -->
+    <!--<shutdownHook/>-->
+</configuration>

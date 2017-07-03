@@ -1,0 +1,7 @@
+ "nr-of-instances" : 1,
+                    # reference.conf @ jar:file:/Users/ranand/.gradle/caches/modules-2/files-2.1/com.typesafe.akka/akka-actor_2.11/2.5.3/c1a44d5cbaa7ff7ce1d05c60a93ed3e2d5b19e80/akka-actor_2.11-2.5.3.jar!/reference.conf: 260
+                    # Routers with dynamically resizable number of routees based on
+                    # performance metrics.
+                    # This feature is enabled by including (parts of) this section in
+                    # the deployment, cannot be enabled together with default resizer.
+                    "optimal-size-exploring-resizer" : {
