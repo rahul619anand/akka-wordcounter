@@ -56,6 +56,7 @@ public class FileScannerActor extends AbstractActor {
                     log.debug("Request Received: {}", event);
                     try {
                         URL url = getUrl();
+                        log.info("Scanning Directory: {}", url);
 
                         if (url != null) {
                             URI uri = url.toURI();
