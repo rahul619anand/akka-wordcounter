@@ -1,6 +1,5 @@
 # akka-wordcounter
 
-A wordcounter application built in akka.
 
 ### Working
 
@@ -14,7 +13,7 @@ The main process involves the following :
     3. The FileParserActor parses each file and sends LINES in the file along with START_OF_FILE and END_OF_FILE events to AggregatorActor.
     4. The AggregatorActor aggregates the wordcount of each file and prints to console when it receives END_OF_FILE event.
     
-### Configuration:
+### Configuration Management
    
 1. The application can be run in two ways:
 
@@ -34,16 +33,7 @@ The main process involves the following :
             log-directory = log  
             
 Note : Configurations regarding jmx, actor mailbox , dispatchers ,log levels and debugging options can be tuned as and when needed in application.conf             
-            
-        
-### Dependencies Used 
-        
-1. JUnit 5 and Akka TestKit :  Test Cases for Actors
-
-2. Logback : Logging Framework
-
-Note: TypeSafe Config (used as dependency in Akka Framework ) is overriden (application.conf overrides reference.conf of akka) and referred (i.e. loaded by Akka).
-        
+                   
 
 ### Consistency 
 
@@ -59,16 +49,6 @@ The above model showcases medium scalability through following :
 
 The best capability of this model can be showcased by tuning these configs according to the memory and system constraints.    
 
-
-### Possibilities of improvement
-
-Using Client Server Model / Akka Streams would much better suit the use case, however sequencing of message events ( START_OF_FILE , line, END_OF_FILE ) should be carefully dealt with. 
-
-
-### Logs 
-
-All application specific logs will be printed on console as well as in application.log.
-Default Log level is INFO 
 
 ### Build , Test and Run
 
@@ -103,7 +83,34 @@ Scanning default :  "src/main/resources/log" containing 10 random sample logs
         2017-07-03 19:22:06,999 INFO  e.a.w.actors.AggregatorActor - /Users/ranand/github/akka/build/resources/main/log/morelogs/sample6.log , Word Count: 34473
         
         
-### Monitoring  
+### JVM Monitoring  
+
+Enable JMX for insights into the goods and the bottlenecks 
+    
+   CPU Sample Snapshot
      
    ![CPU Sample Snapshot](https://github.com/rahul619anand/akka-wordcounter/blob/master/Cpu_Sample.png)
+   
+   Thread State Snapshot
+   
    ![Thread State Snapshot](https://github.com/rahul619anand/akka-wordcounter/blob/master/Thread_Monitor.png)
+   
+   
+### Logs 
+
+All application specific logs will be printed on console as well as in file (i.e. application.log).
+Default Log level is INFO.    
+   
+### Dependencies Used 
+        
+1. JUnit 5 and Akka TestKit :  Test Cases for Actors
+
+2. Logback : Logging Framework
+
+Note: TypeSafe Config (used as dependency in Akka Framework ) is overriden (application.conf overrides reference.conf of akka) and referred (i.e. loaded by Akka).
+    
+
+### Possible improvements
+
+1. Using Client Server Model / Akka Streams would much better suit the use case, however sequencing of message events ( START_OF_FILE , line, END_OF_FILE ) should be carefully dealt with. 
+2. Better Supervision Strategy of Actors when processing large amount of data.   

@@ -37,7 +37,7 @@ public class FileScannerActorTest {
     void fileSentCountCheck() {
         new TestKit(system) {
             {
-                final ActorRef fileScannerActor = system.actorOf(FileScannerActor.props(probe.getRef(),new FileSystemUtils()));
+                final ActorRef fileScannerActor = system.actorOf(FileScannerActor.props(probe.getRef(), new FileSystemUtils()));
                 fileScannerActor.tell(Constants.SCAN, getRef());
                 awaitCond(probe::msgAvailable); // awaiting until message is available to probe
                 probe.receiveN(2); // expects no of files for parsing
@@ -51,7 +51,7 @@ public class FileScannerActorTest {
     void fileSentDurationCheck() {
         new TestKit(system) {
             {
-                final ActorRef fileScannerActor = system.actorOf(FileScannerActor.props(probe.getRef(),new FileSystemUtils()));
+                final ActorRef fileScannerActor = system.actorOf(FileScannerActor.props(probe.getRef(), new FileSystemUtils()));
                 within(duration("5 seconds"), () -> {
                     fileScannerActor.tell(Constants.SCAN, getRef());
                     awaitCond(probe::msgAvailable); // awaiting until message is available to probe

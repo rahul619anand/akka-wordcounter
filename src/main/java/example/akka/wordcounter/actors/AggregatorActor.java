@@ -71,7 +71,7 @@ public class AggregatorActor extends AbstractActor {
     private void initializeCounter() {
         log.debug("Received event: {}", Constants.START_OF_FILE);
         counter = new AtomicLong(0);
-        sendEvent(getSender(),"All set to process..." + filePath);
+        sendEvent(getSender(), "All set to process..." + filePath);
     }
 
     /**
@@ -81,7 +81,7 @@ public class AggregatorActor extends AbstractActor {
         log.debug("Received event: {}", Constants.END_OF_FILE);
         if (counter != null) {
             log.info("{} , Word Count: {}", filePath, counter.get());
-            sendEvent(getSender(),filePath+" : "+counter.get());
+            sendEvent(getSender(), filePath + " : " + counter.get());
         } else {
             log.error("Can't send END_OF_FILE before START_OF_FILE");
             sendEvent(getSender(), "Can't send END_OF_FILE before START_OF_FILE");

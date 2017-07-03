@@ -91,10 +91,10 @@ public class FileParserActor extends AbstractActor {
             sendEvent(actorRef, Constants.END_OF_FILE);
 
         } catch (NoSuchFileException e) {
-            log.error("NoSuchFileException : {}",e);
+            log.error("NoSuchFileException : {}", e);
             getSender().tell(e.getClass().getSimpleName(), getSelf());
         } catch (IOException e) {
-            log.error("IOException : {}",e);
+            log.error("IOException : {}", e);
             getSender().tell(e, getSelf());
         }
     }

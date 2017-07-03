@@ -1,3 +1,17 @@
+/* buildscript closure ensures that the dependencies are available for use within the gradle build itself.
+*/
+buildscript {
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4"
+    }
+}
+
+
 group 'test.akka'
 version '1.0'
 
@@ -7,53 +21,32 @@ apply plugin: 'org.junit.platform.gradle.plugin'
 
 sourceCompatibility = 1.8
 
-ext.junitPlatformVersion = '1.0.0-M4'
-ext.junitJupiterVersion = '5.0.0-M4'
-
-/*
-Putting it in the buildscript closure ensures that the dependencies are available for use within the gradle build itself.
-*/
-buildscript {
-
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4'
-    }
+ext {
+    junitPlatformVersion = '1.0.0-M4'
+    junitJupiterVersion = '5.0.0-M4'
 }
 
 /* The global level dependencies and repositories sections list dependencies that are required
- to building and runnning the source  etc.*/
+ to building and runnning the source,etc.*/
 repositories {
     mavenCentral()
 }
 
 dependencies {
 
-    // logger implementation
-    compile "ch.qos.logback:logback-classic:1.1.7"
 
-    // https://mvnrepository.com/artifact/com.typesafe.akka/akka-actor_2.11
-    compile group: 'com.typesafe.akka', name: 'akka-actor_2.11', version: '2.5.3'
-
-    // https://mvnrepository.com/artifact/com.typesafe.akka/akka-slf4j_2.11
-    compile group: 'com.typesafe.akka', name: 'akka-slf4j_2.11', version: '2.5.3'
-    // already contains slf4j-api dependency jar
+    compile "ch.qos.logback:logback-classic:1.1.7", // logger implementation
+            "com.typesafe.akka:akka-actor_2.11:2.5.3",
+            "com.typesafe.akka:akka-slf4j_2.11:2.5.3" // already contains slf4j-api dependency jar
 
 
-    // JUnit 5 Jupiter API and TestEngine implementation
-    testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
-    testCompile("org.junit.platform:junit-platform-runner:${junitPlatformVersion}")
-    testCompile("org.junit.platform:junit-platform-suite-api:${junitPlatformVersion}")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+    testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}", // JUnit 5
+            "org.junit.platform:junit-platform-runner:${junitPlatformVersion}",
+            "org.junit.platform:junit-platform-suite-api:${junitPlatformVersion}",
+            "com.typesafe.akka:akka-testkit_2.11:2.5.3" //Akka TestKit
 
-    // https://mvnrepository.com/artifact/com.typesafe.akka/akka-testkit_2.11
-    testCompile group: 'com.typesafe.akka', name: 'akka-testkit_2.11', version: '2.5.3'
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 }
-
-
 
 // creates executable jar in build/libs directory
 task createExecutableJar(type: Jar) {

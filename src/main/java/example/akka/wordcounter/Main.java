@@ -43,7 +43,7 @@ public class Main {
             //disabled by default, enable from config
             if (getSettings(system).getExecutionMode().equals("scheduler")) {
                 int interval = getSettings(system).getExecutionInterval();
-                log.debug("Running SCHEDULED SCAN to calculate word count every {} second, ",interval);
+                log.debug("Running SCHEDULED SCAN to calculate word count every {} second, ", interval);
                 system.scheduler().schedule(
                         Duration.create(5, TimeUnit.MILLISECONDS),
                         Duration.create(interval, TimeUnit.SECONDS)
@@ -57,6 +57,8 @@ public class Main {
 
         } catch (Exception e) {
             log.error("Exception: ", e);
+            fileSystemUtils.close();
+            system.terminate();
         }
     }
 

@@ -8,7 +8,6 @@ import org.junit.jupiter.api.*;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
-import java.time.Duration;
 import java.util.stream.IntStream;
 
 /**
@@ -28,19 +27,19 @@ public class AggregatorActorTest {
 
 
     @Test
-    @DisplayName("AggregatorActor should correctly process different events (START_OF_FILE,LINE,END_OF_FILE) in sequence under specified duration")
+    @DisplayName("AggregatorActor should correctly process events (START_OF_FILE,LINE,END_OF_FILE) in sequence under specified duration")
     void aggregateSequenceTest() {
-         new TestKit(system) {
+        new TestKit(system) {
             {
                 final ActorRef aggregatorActor = system.actorOf(AggregatorActor.props("sample.log"));
                 aggregatorActor.tell(Constants.START_OF_FILE, getRef());
-                expectMsg(duration("5 second"), "All set to process...sample.log");
+                expectMsg(duration("2 second"), "All set to process...sample.log");
 
-                within(duration("10 seconds"), () -> {
+                within(duration("5 seconds"), () -> {
                     aggregatorActor.tell("hello world", getRef());
                     aggregatorActor.tell(Constants.END_OF_FILE, getRef());
 
-                    expectMsg(duration("5 second"), "sample.log : 2");
+                    expectMsg(duration("2 second"), "sample.log : 2");
                     return null;
                 });
             }
@@ -50,7 +49,7 @@ public class AggregatorActorTest {
 
     @Test
     @RepeatedTest(10) // checking it 10 times to verify if calculation is consistent
-    @DisplayName("AggregatorActor should correctly calculate word count when it receives multiple LINE's of a files concurrently to parse")
+    @DisplayName("AggregatorActor should correctly calculate word count when it receives multiple LINE's of a file concurrently")
     void wordCountCorrectnessCheck() {
         new TestKit(system) {
             {
@@ -60,7 +59,7 @@ public class AggregatorActorTest {
 
                 within(duration("10 seconds"), () -> {
                     // using parallel call to check concurrent consistency
-                    IntStream.range(1,50).parallel().forEach(i -> aggregatorActor.tell("hello "+i, getRef()));
+                    IntStream.range(1, 50).parallel().forEach(i -> aggregatorActor.tell("hello " + i, getRef()));
 
                     aggregatorActor.tell(Constants.END_OF_FILE, getRef());
 
@@ -74,15 +73,15 @@ public class AggregatorActorTest {
 
 
     @Test
-    @DisplayName("AggregatorActor should return word count as 0 if it doesn't receives LINE of a file to parse")
+    @DisplayName("AggregatorActor should return word count as 0 if it doesn't receives any LINE of a file to parse")
     void zeroWordCheck() {
         new TestKit(system) {
             {
                 final ActorRef aggregatorActor = system.actorOf(AggregatorActor.props("sample.log"));
                 aggregatorActor.tell(Constants.START_OF_FILE, getRef());
-                expectMsg(duration("5 second"), "All set to process...sample.log");
+                expectMsg(duration("2 second"), "All set to process...sample.log");
                 aggregatorActor.tell(Constants.END_OF_FILE, getRef());
-                expectMsg(duration("5 second"), "sample.log : 0");
+                expectMsg(duration("2 second"), "sample.log : 0");
 
             }
         };
@@ -96,7 +95,7 @@ public class AggregatorActorTest {
             {
                 final ActorRef aggregatorActor = system.actorOf(AggregatorActor.props("sample.log"));
                 aggregatorActor.tell("hello world", getRef());
-                expectMsg(duration("5 second"), "Can't send LINE before START_OF_FILE");
+                expectMsg(duration("2 second"), "Can't send LINE before START_OF_FILE");
 
             }
         };
@@ -110,7 +109,7 @@ public class AggregatorActorTest {
             {
                 final ActorRef aggregatorActor = system.actorOf(AggregatorActor.props("sample.log"));
                 aggregatorActor.tell(Constants.END_OF_FILE, getRef());
-                expectMsg(duration("5 second"), "Can't send END_OF_FILE before START_OF_FILE");
+                expectMsg(duration("2 second"), "Can't send END_OF_FILE before START_OF_FILE");
 
             }
         };
